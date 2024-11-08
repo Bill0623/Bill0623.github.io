@@ -1236,7 +1236,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #ff3b26;
+    background: #7a8a9e;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2814,5 +2814,5 @@ header.header {
   }
 }
 body {
-  background-color: #b0c4de; /* 雾霾蓝的颜色代码 */
+  background-color: #1c2936;
 }
