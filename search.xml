@@ -525,4 +525,37 @@
         <tag>Study</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Linux 进程内存布局</title>
+    <url>/2024/11/08/Linux-process-layout/</url>
+    <content><![CDATA[<h1 id="Linux-进程内存布局"><a href="#Linux-进程内存布局" class="headerlink" title="Linux 进程内存布局"></a>Linux 进程内存布局</h1><span id="more"></span>
+
+<h2 id="内存布局图示"><a href="#内存布局图示" class="headerlink" title="内存布局图示"></a>内存布局图示</h2><p><img src="/./images/lpl.png" alt="内存布局图"></p>
+<h2 id="内存区域解释"><a href="#内存区域解释" class="headerlink" title="内存区域解释"></a>内存区域解释</h2><h3 id="1-内核空间-Kernel-Space"><a href="#1-内核空间-Kernel-Space" class="headerlink" title="1. 内核空间 (Kernel Space)"></a>1. 内核空间 (Kernel Space)</h3><p>最高地址处为内核空间。这部分内存是为操作系统内核保留的，用户态的程序无法直接访问，以保证系统的安全和稳定</p>
+<h3 id="2-栈-Stack"><a href="#2-栈-Stack" class="headerlink" title="2. 栈 (Stack)"></a>2. 栈 (Stack)</h3><p>栈从高地址向低地址增长，用于存储局部变量、函数调用信息和返回地址等。每次函数调用时，都会在栈中分配空间，调用结束时释放空间</p>
+<ul>
+<li>栈从高地址向低地址增长，因此通常在图中箭头向下表示</li>
+</ul>
+<h3 id="3-未映射内存区域"><a href="#3-未映射内存区域" class="headerlink" title="3. 未映射内存区域"></a>3. 未映射内存区域</h3><p>在栈和堆之间有一段未使用的内存区域，作为保护区，避免栈和堆相互干扰。这部分内存用于动态内存分配的缓冲区，防止栈溢出和堆冲突</p>
+<h3 id="4-动态链接库-Dynamically-Linked-Libraries"><a href="#4-动态链接库-Dynamically-Linked-Libraries" class="headerlink" title="4. 动态链接库 (Dynamically Linked Libraries)"></a>4. 动态链接库 (Dynamically Linked Libraries)</h3><p>动态链接库会在程序运行时加载到堆区域之上。它们提供了程序运行时所需的共享库功能</p>
+<h3 id="5-堆-Heap"><a href="#5-堆-Heap" class="headerlink" title="5. 堆 (Heap)"></a>5. 堆 (Heap)</h3><p>堆从低地址向高地址增长，用于动态分配内存，如程序运行时使用 <code>malloc</code> 或 <code>new</code> 分配的内存。程序结束后，这部分内存需要手动释放</p>
+<h3 id="6-BSS段"><a href="#6-BSS段" class="headerlink" title="6. BSS段"></a>6. BSS段</h3><p>BSS段用于存储未初始化的全局或静态变量。这些变量在程序开始运行时会被初始化为0，占据虚拟内存但没有实际存储在可执行文件中</p>
+<h3 id="7-数据段-Data-Segment"><a href="#7-数据段-Data-Segment" class="headerlink" title="7. 数据段 (Data Segment)"></a>7. 数据段 (Data Segment)</h3><p>数据段用于存储已初始化的全局和静态变量。与BSS不同，这部分数据在程序编译时就已存储在可执行文件中，并在程序加载时被加载到内存中</p>
+<h3 id="8-代码段-Text-Segment"><a href="#8-代码段-Text-Segment" class="headerlink" title="8. 代码段 (Text Segment)"></a>8. 代码段 (Text Segment)</h3><p>代码段用于存储程序的可执行代码，即指令。这个区域通常是只读的，防止程序意外或恶意修改指令</p>
+<h3 id="9-未使用空间"><a href="#9-未使用空间" class="headerlink" title="9. 未使用空间"></a>9. 未使用空间</h3><p>最底部是未使用的内存区域</p>
+<h3 id="区域1"><a href="#区域1" class="headerlink" title="区域1"></a>区域1</h3><p>包括从“栈 (Stack)”到“动态链接库 (Dynamically Linked Libraries) 和堆 (Heap)”之间的内存区域。这部分内存属于用户态可用的动态数据区域，用于程序在运行时动态分配和管理的内存</p>
+<h3 id="区域2"><a href="#区域2" class="headerlink" title="区域2"></a>区域2</h3><p>包括从“BSS段”到“代码段 (Text Segment)”之间的内存区域。它包含了BSS段、数据段和代码段。这部分内存主要用于存储程序的静态数据和指令，是程序在编译和加载时就已确定的区域，属于只读或只写数据区域</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Stack</title>
+    <url>/2024/11/08/Stack/</url>
+    <content><![CDATA[]]></content>
+  </entry>
 </search>
