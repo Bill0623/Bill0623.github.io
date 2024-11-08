@@ -207,7 +207,6 @@
     <div class="main-inner post posts-expand">
 
 
-  
 
 
 <div class="post-block">
@@ -572,28 +571,7 @@
 
 
 
-  <div class="post-meta">
-    <span id="page-views">加载中...</span>
-  </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // 示例：获取页面访问量的逻辑（需要根据你的实际需求实现）
-      const pageViews = getPageViewsFromAPI(); // 这里需要替换为实际获取访问量数据的函数
-
-      if (pageViews !== null) {
-        document.getElementById('page-views').innerText = '访问量：' + pageViews + ' 次';
-      } else {
-        document.getElementById('page-views').innerText = '无法获取访问量数据';
-      }
-    });
-
-    // 示例函数：需要实现具体逻辑以获取访问量数据
-    function getPageViewsFromAPI() {
-      // 在这里实现从 Google Analytics 或其他统计工具中获取访问量数据
-      return null; // 需要实际实现
-    }
-  </script>
 
     <div class="comments gitalk-container"></div>
 </div>
