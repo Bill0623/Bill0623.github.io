@@ -245,6 +245,32 @@
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
   </div>
 -->
+<div id="time-since-deploy">网站上线时间：<span id="time-elapsed"></span></div>
+<div>感谢访问！(❁´◡`❁)</div> <!-- 添加颜文字 -->
+
+<script>
+  // 设置网站的上线时间（替换为你的实际部署日期）
+  var deployDate = new Date('2024-11-07T18:48:01');
+
+  function updateElapsedTime() {
+    var now = new Date();
+    var elapsed = now - deployDate; // 获取时间差（以毫秒为单位）
+
+    // 将时间差转换为天、小时、分钟和秒
+    var days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+    // 显示结果
+    document.getElementById('time-elapsed').innerText =
+      days + '天 ' + hours + '小时 ' + minutes + '分钟 ' + seconds + '秒';
+  }
+
+  // 初始化并每秒更新一次时间
+  updateElapsedTime();
+  setInterval(updateElapsedTime, 1000);
+</script>
 
     </div>
   </footer>
@@ -288,6 +314,8 @@
 
 <script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"Bill0623","repo":"comment","client_id":"Ov23liDkCb45K1jCjLsN","client_secret":"7e173ba3c99d122dbdf0666191f8b032084ff7db","admin_user":"Bill0623","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":["en","zh-CN","zh-TW"],"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"f47af1d1eda4d807b02bba32be15120b"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
+
+
 
 </body>
 </html>
