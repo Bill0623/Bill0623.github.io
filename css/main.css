@@ -1394,7 +1394,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #839855;
+    background: #ff2239;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -3044,17 +3044,23 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   overflow: hidden;
-  width: 280px;
+  width: 280px; /* 固定宽度以保证一致性 */
+  flex: 1 1 auto; /* 确保卡片根据容器自动调整 */
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .life-share-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
-.card-image img {
+.card-image {
   width: 100%;
   height: 180px;
-  object-fit: cover;
+  overflow: hidden;
+}
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保持图片比例并填充容器 */
 }
 .card-content {
   padding: 15px;
