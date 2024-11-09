@@ -1,205 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>汇编学习1</title>
-    <url>/2024/11/07/Assembly-study-1/</url>
-    <content><![CDATA[<h1 id="IA-32-架构寄存器详解"><a href="#IA-32-架构寄存器详解" class="headerlink" title="IA-32 架构寄存器详解"></a>IA-32 架构寄存器详解</h1><span id="more"></span>
+    <title>汇编学习4</title>
+    <url>/2024/11/09/AFunction/</url>
+    <content><![CDATA[<h1 id="汇编函数"><a href="#汇编函数" class="headerlink" title="汇编函数"></a>汇编函数</h1><span id="more"></span>
 
-<p>在IA-32架构中，各寄存器的位数和主要用途如下：</p>
-<h2 id="通用寄存器（General-Purpose-Registers）"><a href="#通用寄存器（General-Purpose-Registers）" class="headerlink" title="通用寄存器（General Purpose Registers）"></a>通用寄存器（General Purpose Registers）</h2><ol>
-<li><p><strong>EAX</strong> - 累加器寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>低16位</strong>：AX</li>
-<li><strong>低8位</strong>：AL（低8位）、AH（高8位）</li>
-<li><strong>用途</strong>：用于算术和逻辑运算的默认寄存器。在系统调用中，<strong>EAX</strong> 用于存放系统调用号</li>
-</ul>
-</li>
-<li><p><strong>EBX</strong> - 基址寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>低16位</strong>：BX</li>
-<li><strong>低8位</strong>：BL（低8位）、BH（高8位）</li>
-<li><strong>用途</strong>：常用于存储数据地址。在系统调用中，<strong>EBX</strong>通常作为第一个参数</li>
-</ul>
-</li>
-<li><p><strong>ECX</strong> - 计数寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>低16位</strong>：CX</li>
-<li><strong>低8位</strong>：CL（低8位）、CH（高8位）</li>
-<li><strong>用途</strong>：在循环和字符串操作中使用。在系统调用中，<strong>ECX</strong>通常用于存放第二个参数</li>
-</ul>
-</li>
-<li><p><strong>EDX</strong> - 数据寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>低16位</strong>：DX</li>
-<li><strong>低8位</strong>：DL（低8位）、DH（高8位）</li>
-<li><strong>用途</strong>：用于扩展运算，特别是乘法和除法操作。在系统调用中，<strong>EDX</strong>通常用于存放第三个参数</li>
-</ul>
-</li>
+<p>今天用汇编完成一个函数，还是计算两个数的和</p>
+<h2 id="函数流程概述"><a href="#函数流程概述" class="headerlink" title="函数流程概述"></a>函数流程概述</h2><ol>
+<li><strong>函数调用者</strong>将参数压入栈中</li>
+<li><strong>被调用函数</strong>创建自己的栈帧</li>
+<li><strong>函数执行</strong>，完成计算</li>
+<li><strong>函数返回</strong>，清理栈帧并返回结果</li>
 </ol>
-<h2 id="指针寄存器（Pointer-Registers）"><a href="#指针寄存器（Pointer-Registers）" class="headerlink" title="指针寄存器（Pointer Registers）"></a>指针寄存器（Pointer Registers）</h2><ol>
-<li><p><strong>ESP</strong> - 栈指针寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>用途</strong>：指向当前栈的顶端。管理函数调用中的栈指针</li>
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">section .text</span><br><span class="line">    global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; 将参数压入栈中</span><br><span class="line">    push dword 5     ; 参数1</span><br><span class="line">    push dword 3     ; 参数2</span><br><span class="line"></span><br><span class="line">    ; 调用函数</span><br><span class="line">    call add_two_numbers</span><br><span class="line"></span><br><span class="line">    ; 清理栈中的参数</span><br><span class="line">    add esp, 8</span><br><span class="line"></span><br><span class="line">    ; 结束程序</span><br><span class="line">    mov eax, 1        ; sys_exit</span><br><span class="line">    int 0x80</span><br><span class="line"></span><br><span class="line">; 函数定义</span><br><span class="line">add_two_numbers:</span><br><span class="line">    ; 创建栈帧</span><br><span class="line">    push ebp</span><br><span class="line">    mov ebp, esp</span><br><span class="line"></span><br><span class="line">    ; 获取参数</span><br><span class="line">    mov eax, [ebp+8]  ; 参数1</span><br><span class="line">    mov ebx, [ebp+12] ; 参数2</span><br><span class="line"></span><br><span class="line">    ; 执行加法</span><br><span class="line">    add eax, ebx</span><br><span class="line"></span><br><span class="line">    ; 恢复栈帧</span><br><span class="line">    mov esp, ebp</span><br><span class="line">    pop ebp</span><br><span class="line"></span><br><span class="line">    ; 返回</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+<h2 id="代码解释"><a href="#代码解释" class="headerlink" title="代码解释"></a>代码解释</h2><h3 id="主程序部分（-start）"><a href="#主程序部分（-start）" class="headerlink" title="主程序部分（_start）"></a>主程序部分（_start）</h3><ul>
+<li><code>push dword 5</code> 和 <code>push dword 3</code>：将参数 5 和 3 压入栈中</li>
+<li><code>call add_two_numbers</code>：调用 <code>add_two_numbers</code> 函数</li>
+<li><code>add esp, 8</code>：清理栈中压入的参数（每个参数 4 字节，共 8 字节）</li>
 </ul>
-</li>
-<li><p><strong>EBP</strong> - 基址指针寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>用途</strong>：用于函数调用时保存栈的基址，便于访问局部变量和参数</li>
+<h3 id="函数部分（add-two-numbers）"><a href="#函数部分（add-two-numbers）" class="headerlink" title="函数部分（add_two_numbers）"></a>函数部分（add_two_numbers）</h3><ul>
+<li><code>push ebp</code> 和 <code>mov ebp, esp</code>：创建新的栈帧，保存上一个栈帧的基址</li>
+<li><code>mov eax, [ebp+8]</code>：从栈帧中获取第一个参数</li>
+<li><code>mov ebx, [ebp+12]</code>：从栈帧中获取第二个参数</li>
+<li><code>add eax, ebx</code>：将两个参数相加，结果存入 <code>eax</code></li>
+<li><code>mov esp, ebp</code> 和 <code>pop ebp</code>：恢复之前的栈帧</li>
+<li><code>ret</code>：返回到调用者</li>
 </ul>
-</li>
-</ol>
-<h2 id="索引寄存器（Index-Registers）"><a href="#索引寄存器（Index-Registers）" class="headerlink" title="索引寄存器（Index Registers）"></a>索引寄存器（Index Registers）</h2><ol>
-<li><p><strong>ESI</strong> - 源索引寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>用途</strong>：在字符串操作中用作源地址。在系统调用中，<strong>ESI</strong>通常用于存放第四个参数</li>
-</ul>
-</li>
-<li><p><strong>EDI</strong> - 目的索引寄存器</p>
-<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>用途</strong>：在字符串操作中用作目标地址。在系统调用中，<strong>EDI</strong>通常用于存放第五个参数</li>
-</ul>
-</li>
-</ol>
-<h2 id="指令指针（Instruction-Pointer）"><a href="#指令指针（Instruction-Pointer）" class="headerlink" title="指令指针（Instruction Pointer）"></a>指令指针（Instruction Pointer）</h2><ol>
-<li><strong>EIP</strong> - 指令指针<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>用途</strong>：指向当前执行的指令地址，CPU根据EIP读取和执行指令</li>
-</ul>
-</li>
-</ol>
-<h2 id="标志寄存器（Flags-Register）"><a href="#标志寄存器（Flags-Register）" class="headerlink" title="标志寄存器（Flags Register）"></a>标志寄存器（Flags Register）</h2><ol>
-<li><strong>EFLAGS</strong> - 标志寄存器<ul>
-<li><strong>位数</strong>：32位</li>
-<li><strong>用途</strong>：存储CPU状态标志，如零标志、进位标志、溢出标志等，影响条件分支的行为</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h3 id="系统调用中的寄存器分配"><a href="#系统调用中的寄存器分配" class="headerlink" title="系统调用中的寄存器分配"></a>系统调用中的寄存器分配</h3><p>在Linux系统调用中，通常使用以下寄存器分配方式：</p>
-<ul>
-<li><strong>EAX</strong>：存放系统调用号</li>
-<li><strong>EBX</strong>：第一个参数</li>
-<li><strong>ECX</strong>：第二个参数</li>
-<li><strong>EDX</strong>：第三个参数</li>
-<li><strong>ESI</strong>：第四个参数</li>
-<li><strong>EDI</strong>：第五个参数</li>
-<li><strong>EBP</strong>：第六个参数</li>
-</ul>
-<h1 id="x86-64-架构寄存器详解"><a href="#x86-64-架构寄存器详解" class="headerlink" title="x86-64 架构寄存器详解"></a>x86-64 架构寄存器详解</h1><p>在x86-64架构中，寄存器分为通用寄存器、指针寄存器、索引寄存器、指令指针、标志寄存器等。每个寄存器的位数为64位，同时它们也可以分为32位、16位和8位的部分来访问</p>
-<h2 id="通用寄存器（General-Purpose-Registers）-1"><a href="#通用寄存器（General-Purpose-Registers）-1" class="headerlink" title="通用寄存器（General Purpose Registers）"></a>通用寄存器（General Purpose Registers）</h2><ol>
-<li><p><strong>RAX</strong> - 累加器寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：EAX</li>
-<li><strong>16位</strong>：AX</li>
-<li><strong>8位</strong>：AL（低8位）、AH（高8位）</li>
-<li><strong>用途</strong>：算术和逻辑运算的默认寄存器。在系统调用中，<strong>RAX</strong>用于存放系统调用号</li>
-</ul>
-</li>
-<li><p><strong>RBX</strong> - 基址寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：EBX</li>
-<li><strong>16位</strong>：BX</li>
-<li><strong>8位</strong>：BL（低8位）、BH（高8位）</li>
-<li><strong>用途</strong>：常用于数据存储地址</li>
-</ul>
-</li>
-<li><p><strong>RCX</strong> - 计数寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：ECX</li>
-<li><strong>16位</strong>：CX</li>
-<li><strong>8位</strong>：CL（低8位）、CH（高8位）</li>
-<li><strong>用途</strong>：通常用于循环操作，作为计数器。部分指令（如字符串操作指令）依赖于此寄存器</li>
-</ul>
-</li>
-<li><p><strong>RDX</strong> - 数据寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：EDX</li>
-<li><strong>16位</strong>：DX</li>
-<li><strong>8位</strong>：DL（低8位）、DH（高8位）</li>
-<li><strong>用途</strong>：在扩展运算中使用，尤其是乘法和除法操作。在系统调用中，<strong>RDX</strong>用于存放第三个参数</li>
-</ul>
-</li>
-<li><p><strong>RSI</strong> - 源索引寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：ESI</li>
-<li><strong>16位</strong>：SI</li>
-<li><strong>8位</strong>：SIL</li>
-<li><strong>用途</strong>：在字符串操作中用作源地址。在系统调用中，<strong>RSI</strong>通常用于存放第二个参数</li>
-</ul>
-</li>
-<li><p><strong>RDI</strong> - 目的索引寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：EDI</li>
-<li><strong>16位</strong>：DI</li>
-<li><strong>8位</strong>：DIL</li>
-<li><strong>用途</strong>：在字符串操作中用作目标地址。在系统调用中，<strong>RDI</strong>通常用于存放第一个参数</li>
-</ul>
-</li>
-<li><p><strong>RBP</strong> - 基址指针寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：EBP</li>
-<li><strong>16位</strong>：BP</li>
-<li><strong>8位</strong>：BPL</li>
-<li><strong>用途</strong>：用于函数调用时保存栈的基址，便于访问局部变量和参数</li>
-</ul>
-</li>
-<li><p><strong>RSP</strong> - 栈指针寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>32位</strong>：ESP</li>
-<li><strong>16位</strong>：SP</li>
-<li><strong>8位</strong>：SPL</li>
-<li><strong>用途</strong>：指向当前栈顶，用于管理函数调用栈</li>
-</ul>
-</li>
-<li><p><strong>R8</strong> 至 <strong>R15</strong> - 扩展通用寄存器</p>
-<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>用途</strong>：这些额外的通用寄存器用于增加数据处理能力。在系统调用中，<strong>R8</strong>至<strong>R9</strong>通常用于存放第五和第六个参数</li>
-</ul>
-</li>
-</ol>
-<h2 id="指令指针（Instruction-Pointer）-1"><a href="#指令指针（Instruction-Pointer）-1" class="headerlink" title="指令指针（Instruction Pointer）"></a>指令指针（Instruction Pointer）</h2><ol>
-<li><strong>RIP</strong> - 指令指针<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>用途</strong>：指向当前执行的指令地址，CPU根据RIP读取和执行指令</li>
-</ul>
-</li>
-</ol>
-<h2 id="标志寄存器（Flags-Register）-1"><a href="#标志寄存器（Flags-Register）-1" class="headerlink" title="标志寄存器（Flags Register）"></a>标志寄存器（Flags Register）</h2><ol>
-<li><strong>RFLAGS</strong> - 标志寄存器<ul>
-<li><strong>位数</strong>：64位</li>
-<li><strong>用途</strong>：存储CPU状态标志，如零标志、进位标志、溢出标志等，影响程序条件分支的行为</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h3 id="系统调用中的寄存器分配（Linux）"><a href="#系统调用中的寄存器分配（Linux）" class="headerlink" title="系统调用中的寄存器分配（Linux）"></a>系统调用中的寄存器分配（Linux）</h3><p>在x86-64（64位）架构中，Linux系统调用使用以下寄存器分配方式：</p>
-<ul>
-<li><strong>RAX</strong>：存放系统调用号</li>
-<li><strong>RDI</strong>：第一个参数</li>
-<li><strong>RSI</strong>：第二个参数</li>
-<li><strong>RDX</strong>：第三个参数</li>
-<li><strong>R10</strong>：第四个参数</li>
-<li><strong>R8</strong>：第五个参数</li>
-<li><strong>R9</strong>：第六个参数</li>
-</ul>
-<p>对于超过六个参数的情况，额外的参数会通过栈传递</p>
+<h2 id="栈帧结构"><a href="#栈帧结构" class="headerlink" title="栈帧结构"></a>栈帧结构</h2><p>调用 <code>add_two_numbers</code> 函数时，栈的结构如下</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">高地址</span><br><span class="line">---------</span><br><span class="line"><span class="selector-attr">[返回地址]</span>       &lt;- <span class="selector-attr">[ebp+4]</span></span><br><span class="line"><span class="selector-attr">[参数1：5]</span>       &lt;- <span class="selector-attr">[ebp+8]</span></span><br><span class="line"><span class="selector-attr">[参数2：3]</span>       &lt;- <span class="selector-attr">[ebp+12]</span></span><br><span class="line">---------</span><br><span class="line">低地址</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Assembly</category>
@@ -478,6 +306,216 @@
       </tags>
   </entry>
   <entry>
+    <title>汇编学习1</title>
+    <url>/2024/11/07/Assembly-study-1/</url>
+    <content><![CDATA[<h1 id="IA-32-架构寄存器详解"><a href="#IA-32-架构寄存器详解" class="headerlink" title="IA-32 架构寄存器详解"></a>IA-32 架构寄存器详解</h1><span id="more"></span>
+
+<p>在IA-32架构中，各寄存器的位数和主要用途如下：</p>
+<h2 id="通用寄存器（General-Purpose-Registers）"><a href="#通用寄存器（General-Purpose-Registers）" class="headerlink" title="通用寄存器（General Purpose Registers）"></a>通用寄存器（General Purpose Registers）</h2><ol>
+<li><p><strong>EAX</strong> - 累加器寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>低16位</strong>：AX</li>
+<li><strong>低8位</strong>：AL（低8位）、AH（高8位）</li>
+<li><strong>用途</strong>：用于算术和逻辑运算的默认寄存器。在系统调用中，<strong>EAX</strong> 用于存放系统调用号</li>
+</ul>
+</li>
+<li><p><strong>EBX</strong> - 基址寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>低16位</strong>：BX</li>
+<li><strong>低8位</strong>：BL（低8位）、BH（高8位）</li>
+<li><strong>用途</strong>：常用于存储数据地址。在系统调用中，<strong>EBX</strong>通常作为第一个参数</li>
+</ul>
+</li>
+<li><p><strong>ECX</strong> - 计数寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>低16位</strong>：CX</li>
+<li><strong>低8位</strong>：CL（低8位）、CH（高8位）</li>
+<li><strong>用途</strong>：在循环和字符串操作中使用。在系统调用中，<strong>ECX</strong>通常用于存放第二个参数</li>
+</ul>
+</li>
+<li><p><strong>EDX</strong> - 数据寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>低16位</strong>：DX</li>
+<li><strong>低8位</strong>：DL（低8位）、DH（高8位）</li>
+<li><strong>用途</strong>：用于扩展运算，特别是乘法和除法操作。在系统调用中，<strong>EDX</strong>通常用于存放第三个参数</li>
+</ul>
+</li>
+</ol>
+<h2 id="指针寄存器（Pointer-Registers）"><a href="#指针寄存器（Pointer-Registers）" class="headerlink" title="指针寄存器（Pointer Registers）"></a>指针寄存器（Pointer Registers）</h2><ol>
+<li><p><strong>ESP</strong> - 栈指针寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>用途</strong>：指向当前栈的顶端。管理函数调用中的栈指针</li>
+</ul>
+</li>
+<li><p><strong>EBP</strong> - 基址指针寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>用途</strong>：用于函数调用时保存栈的基址，便于访问局部变量和参数</li>
+</ul>
+</li>
+</ol>
+<h2 id="索引寄存器（Index-Registers）"><a href="#索引寄存器（Index-Registers）" class="headerlink" title="索引寄存器（Index Registers）"></a>索引寄存器（Index Registers）</h2><ol>
+<li><p><strong>ESI</strong> - 源索引寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>用途</strong>：在字符串操作中用作源地址。在系统调用中，<strong>ESI</strong>通常用于存放第四个参数</li>
+</ul>
+</li>
+<li><p><strong>EDI</strong> - 目的索引寄存器</p>
+<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>用途</strong>：在字符串操作中用作目标地址。在系统调用中，<strong>EDI</strong>通常用于存放第五个参数</li>
+</ul>
+</li>
+</ol>
+<h2 id="指令指针（Instruction-Pointer）"><a href="#指令指针（Instruction-Pointer）" class="headerlink" title="指令指针（Instruction Pointer）"></a>指令指针（Instruction Pointer）</h2><ol>
+<li><strong>EIP</strong> - 指令指针<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>用途</strong>：指向当前执行的指令地址，CPU根据EIP读取和执行指令</li>
+</ul>
+</li>
+</ol>
+<h2 id="标志寄存器（Flags-Register）"><a href="#标志寄存器（Flags-Register）" class="headerlink" title="标志寄存器（Flags Register）"></a>标志寄存器（Flags Register）</h2><ol>
+<li><strong>EFLAGS</strong> - 标志寄存器<ul>
+<li><strong>位数</strong>：32位</li>
+<li><strong>用途</strong>：存储CPU状态标志，如零标志、进位标志、溢出标志等，影响条件分支的行为</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="系统调用中的寄存器分配"><a href="#系统调用中的寄存器分配" class="headerlink" title="系统调用中的寄存器分配"></a>系统调用中的寄存器分配</h3><p>在Linux系统调用中，通常使用以下寄存器分配方式：</p>
+<ul>
+<li><strong>EAX</strong>：存放系统调用号</li>
+<li><strong>EBX</strong>：第一个参数</li>
+<li><strong>ECX</strong>：第二个参数</li>
+<li><strong>EDX</strong>：第三个参数</li>
+<li><strong>ESI</strong>：第四个参数</li>
+<li><strong>EDI</strong>：第五个参数</li>
+<li><strong>EBP</strong>：第六个参数</li>
+</ul>
+<h1 id="x86-64-架构寄存器详解"><a href="#x86-64-架构寄存器详解" class="headerlink" title="x86-64 架构寄存器详解"></a>x86-64 架构寄存器详解</h1><p>在x86-64架构中，寄存器分为通用寄存器、指针寄存器、索引寄存器、指令指针、标志寄存器等。每个寄存器的位数为64位，同时它们也可以分为32位、16位和8位的部分来访问</p>
+<h2 id="通用寄存器（General-Purpose-Registers）-1"><a href="#通用寄存器（General-Purpose-Registers）-1" class="headerlink" title="通用寄存器（General Purpose Registers）"></a>通用寄存器（General Purpose Registers）</h2><ol>
+<li><p><strong>RAX</strong> - 累加器寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：EAX</li>
+<li><strong>16位</strong>：AX</li>
+<li><strong>8位</strong>：AL（低8位）、AH（高8位）</li>
+<li><strong>用途</strong>：算术和逻辑运算的默认寄存器。在系统调用中，<strong>RAX</strong>用于存放系统调用号</li>
+</ul>
+</li>
+<li><p><strong>RBX</strong> - 基址寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：EBX</li>
+<li><strong>16位</strong>：BX</li>
+<li><strong>8位</strong>：BL（低8位）、BH（高8位）</li>
+<li><strong>用途</strong>：常用于数据存储地址</li>
+</ul>
+</li>
+<li><p><strong>RCX</strong> - 计数寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：ECX</li>
+<li><strong>16位</strong>：CX</li>
+<li><strong>8位</strong>：CL（低8位）、CH（高8位）</li>
+<li><strong>用途</strong>：通常用于循环操作，作为计数器。部分指令（如字符串操作指令）依赖于此寄存器</li>
+</ul>
+</li>
+<li><p><strong>RDX</strong> - 数据寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：EDX</li>
+<li><strong>16位</strong>：DX</li>
+<li><strong>8位</strong>：DL（低8位）、DH（高8位）</li>
+<li><strong>用途</strong>：在扩展运算中使用，尤其是乘法和除法操作。在系统调用中，<strong>RDX</strong>用于存放第三个参数</li>
+</ul>
+</li>
+<li><p><strong>RSI</strong> - 源索引寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：ESI</li>
+<li><strong>16位</strong>：SI</li>
+<li><strong>8位</strong>：SIL</li>
+<li><strong>用途</strong>：在字符串操作中用作源地址。在系统调用中，<strong>RSI</strong>通常用于存放第二个参数</li>
+</ul>
+</li>
+<li><p><strong>RDI</strong> - 目的索引寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：EDI</li>
+<li><strong>16位</strong>：DI</li>
+<li><strong>8位</strong>：DIL</li>
+<li><strong>用途</strong>：在字符串操作中用作目标地址。在系统调用中，<strong>RDI</strong>通常用于存放第一个参数</li>
+</ul>
+</li>
+<li><p><strong>RBP</strong> - 基址指针寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：EBP</li>
+<li><strong>16位</strong>：BP</li>
+<li><strong>8位</strong>：BPL</li>
+<li><strong>用途</strong>：用于函数调用时保存栈的基址，便于访问局部变量和参数</li>
+</ul>
+</li>
+<li><p><strong>RSP</strong> - 栈指针寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>32位</strong>：ESP</li>
+<li><strong>16位</strong>：SP</li>
+<li><strong>8位</strong>：SPL</li>
+<li><strong>用途</strong>：指向当前栈顶，用于管理函数调用栈</li>
+</ul>
+</li>
+<li><p><strong>R8</strong> 至 <strong>R15</strong> - 扩展通用寄存器</p>
+<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>用途</strong>：这些额外的通用寄存器用于增加数据处理能力。在系统调用中，<strong>R8</strong>至<strong>R9</strong>通常用于存放第五和第六个参数</li>
+</ul>
+</li>
+</ol>
+<h2 id="指令指针（Instruction-Pointer）-1"><a href="#指令指针（Instruction-Pointer）-1" class="headerlink" title="指令指针（Instruction Pointer）"></a>指令指针（Instruction Pointer）</h2><ol>
+<li><strong>RIP</strong> - 指令指针<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>用途</strong>：指向当前执行的指令地址，CPU根据RIP读取和执行指令</li>
+</ul>
+</li>
+</ol>
+<h2 id="标志寄存器（Flags-Register）-1"><a href="#标志寄存器（Flags-Register）-1" class="headerlink" title="标志寄存器（Flags Register）"></a>标志寄存器（Flags Register）</h2><ol>
+<li><strong>RFLAGS</strong> - 标志寄存器<ul>
+<li><strong>位数</strong>：64位</li>
+<li><strong>用途</strong>：存储CPU状态标志，如零标志、进位标志、溢出标志等，影响程序条件分支的行为</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="系统调用中的寄存器分配（Linux）"><a href="#系统调用中的寄存器分配（Linux）" class="headerlink" title="系统调用中的寄存器分配（Linux）"></a>系统调用中的寄存器分配（Linux）</h3><p>在x86-64（64位）架构中，Linux系统调用使用以下寄存器分配方式：</p>
+<ul>
+<li><strong>RAX</strong>：存放系统调用号</li>
+<li><strong>RDI</strong>：第一个参数</li>
+<li><strong>RSI</strong>：第二个参数</li>
+<li><strong>RDX</strong>：第三个参数</li>
+<li><strong>R10</strong>：第四个参数</li>
+<li><strong>R8</strong>：第五个参数</li>
+<li><strong>R9</strong>：第六个参数</li>
+</ul>
+<p>对于超过六个参数的情况，额外的参数会通过栈传递</p>
+]]></content>
+      <categories>
+        <category>Assembly</category>
+        <category>Study</category>
+      </categories>
+      <tags>
+        <tag>Assembly</tag>
+        <tag>Study</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>汇编学习3</title>
     <url>/2024/11/07/Assembly-study-3/</url>
     <content><![CDATA[<h1 id="汇编语言实现的-for-循环和-while-循环"><a href="#汇编语言实现的-for-循环和-while-循环" class="headerlink" title="汇编语言实现的 for 循环和 while 循环"></a>汇编语言实现的 <code>for</code> 循环和 <code>while</code> 循环</h1><span id="more"></span>
@@ -523,34 +561,6 @@
       <tags>
         <tag>Assembly</tag>
         <tag>Study</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 进程内存布局</title>
-    <url>/2024/11/08/Linux-process-layout/</url>
-    <content><![CDATA[<h1 id="Linux-进程内存布局"><a href="#Linux-进程内存布局" class="headerlink" title="Linux 进程内存布局"></a>Linux 进程内存布局</h1><span id="more"></span>
-
-<h2 id="内存布局图示"><a href="#内存布局图示" class="headerlink" title="内存布局图示"></a>内存布局图示</h2><p><img src="/images/lpl.png" alt="内存布局图"></p>
-<h2 id="内存区域解释"><a href="#内存区域解释" class="headerlink" title="内存区域解释"></a>内存区域解释</h2><h3 id="1-内核空间-Kernel-Space"><a href="#1-内核空间-Kernel-Space" class="headerlink" title="1. 内核空间 (Kernel Space)"></a>1. 内核空间 (Kernel Space)</h3><p>最高地址处为内核空间。这部分内存是为操作系统内核保留的，用户态的程序无法直接访问，以保证系统的安全和稳定</p>
-<h3 id="2-栈-Stack"><a href="#2-栈-Stack" class="headerlink" title="2. 栈 (Stack)"></a>2. 栈 (Stack)</h3><p>栈从高地址向低地址增长，用于存储局部变量、函数调用信息和返回地址等。每次函数调用时，都会在栈中分配空间，调用结束时释放空间</p>
-<ul>
-<li>栈从高地址向低地址增长，因此通常在图中箭头向下表示</li>
-</ul>
-<h3 id="3-未映射内存区域"><a href="#3-未映射内存区域" class="headerlink" title="3. 未映射内存区域"></a>3. 未映射内存区域</h3><p>在栈和堆之间有一段未使用的内存区域，作为保护区，避免栈和堆相互干扰。这部分内存用于动态内存分配的缓冲区，防止栈溢出和堆冲突</p>
-<h3 id="4-动态链接库-Dynamically-Linked-Libraries"><a href="#4-动态链接库-Dynamically-Linked-Libraries" class="headerlink" title="4. 动态链接库 (Dynamically Linked Libraries)"></a>4. 动态链接库 (Dynamically Linked Libraries)</h3><p>动态链接库会在程序运行时加载到堆区域之上。它们提供了程序运行时所需的共享库功能</p>
-<h3 id="5-堆-Heap"><a href="#5-堆-Heap" class="headerlink" title="5. 堆 (Heap)"></a>5. 堆 (Heap)</h3><p>堆从低地址向高地址增长，用于动态分配内存，如程序运行时使用 <code>malloc</code> 或 <code>new</code> 分配的内存。程序结束后，这部分内存需要手动释放</p>
-<h3 id="6-BSS段"><a href="#6-BSS段" class="headerlink" title="6. BSS段"></a>6. BSS段</h3><p>BSS段用于存储未初始化的全局或静态变量。这些变量在程序开始运行时会被初始化为0，占据虚拟内存但没有实际存储在可执行文件中</p>
-<h3 id="7-数据段-Data-Segment"><a href="#7-数据段-Data-Segment" class="headerlink" title="7. 数据段 (Data Segment)"></a>7. 数据段 (Data Segment)</h3><p>数据段用于存储已初始化的全局和静态变量。与BSS不同，这部分数据在程序编译时就已存储在可执行文件中，并在程序加载时被加载到内存中</p>
-<h3 id="8-代码段-Text-Segment"><a href="#8-代码段-Text-Segment" class="headerlink" title="8. 代码段 (Text Segment)"></a>8. 代码段 (Text Segment)</h3><p>代码段用于存储程序的可执行代码，即指令。这个区域通常是只读的，防止程序意外或恶意修改指令</p>
-<h3 id="9-未使用空间"><a href="#9-未使用空间" class="headerlink" title="9. 未使用空间"></a>9. 未使用空间</h3><p>最底部是未使用的内存区域</p>
-<h3 id="区域1"><a href="#区域1" class="headerlink" title="区域1"></a>区域1</h3><p>包括从“栈 (Stack)”到“动态链接库 (Dynamically Linked Libraries) 和堆 (Heap)”之间的内存区域。这部分内存属于用户态可用的动态数据区域，用于程序在运行时动态分配和管理的内存</p>
-<h3 id="区域2"><a href="#区域2" class="headerlink" title="区域2"></a>区域2</h3><p>包括从“BSS段”到“代码段 (Text Segment)”之间的内存区域。它包含了BSS段、数据段和代码段。这部分内存主要用于存储程序的静态数据和指令，是程序在编译和加载时就已确定的区域，属于只读或只写数据区域</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -635,6 +645,34 @@
       <tags>
         <tag>Data Structure</tag>
         <tag>Stack</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 进程内存布局</title>
+    <url>/2024/11/08/Linux-process-layout/</url>
+    <content><![CDATA[<h1 id="Linux-进程内存布局"><a href="#Linux-进程内存布局" class="headerlink" title="Linux 进程内存布局"></a>Linux 进程内存布局</h1><span id="more"></span>
+
+<h2 id="内存布局图示"><a href="#内存布局图示" class="headerlink" title="内存布局图示"></a>内存布局图示</h2><p><img src="/images/lpl.png" alt="内存布局图"></p>
+<h2 id="内存区域解释"><a href="#内存区域解释" class="headerlink" title="内存区域解释"></a>内存区域解释</h2><h3 id="1-内核空间-Kernel-Space"><a href="#1-内核空间-Kernel-Space" class="headerlink" title="1. 内核空间 (Kernel Space)"></a>1. 内核空间 (Kernel Space)</h3><p>最高地址处为内核空间。这部分内存是为操作系统内核保留的，用户态的程序无法直接访问，以保证系统的安全和稳定</p>
+<h3 id="2-栈-Stack"><a href="#2-栈-Stack" class="headerlink" title="2. 栈 (Stack)"></a>2. 栈 (Stack)</h3><p>栈从高地址向低地址增长，用于存储局部变量、函数调用信息和返回地址等。每次函数调用时，都会在栈中分配空间，调用结束时释放空间</p>
+<ul>
+<li>栈从高地址向低地址增长，因此通常在图中箭头向下表示</li>
+</ul>
+<h3 id="3-未映射内存区域"><a href="#3-未映射内存区域" class="headerlink" title="3. 未映射内存区域"></a>3. 未映射内存区域</h3><p>在栈和堆之间有一段未使用的内存区域，作为保护区，避免栈和堆相互干扰。这部分内存用于动态内存分配的缓冲区，防止栈溢出和堆冲突</p>
+<h3 id="4-动态链接库-Dynamically-Linked-Libraries"><a href="#4-动态链接库-Dynamically-Linked-Libraries" class="headerlink" title="4. 动态链接库 (Dynamically Linked Libraries)"></a>4. 动态链接库 (Dynamically Linked Libraries)</h3><p>动态链接库会在程序运行时加载到堆区域之上。它们提供了程序运行时所需的共享库功能</p>
+<h3 id="5-堆-Heap"><a href="#5-堆-Heap" class="headerlink" title="5. 堆 (Heap)"></a>5. 堆 (Heap)</h3><p>堆从低地址向高地址增长，用于动态分配内存，如程序运行时使用 <code>malloc</code> 或 <code>new</code> 分配的内存。程序结束后，这部分内存需要手动释放</p>
+<h3 id="6-BSS段"><a href="#6-BSS段" class="headerlink" title="6. BSS段"></a>6. BSS段</h3><p>BSS段用于存储未初始化的全局或静态变量。这些变量在程序开始运行时会被初始化为0，占据虚拟内存但没有实际存储在可执行文件中</p>
+<h3 id="7-数据段-Data-Segment"><a href="#7-数据段-Data-Segment" class="headerlink" title="7. 数据段 (Data Segment)"></a>7. 数据段 (Data Segment)</h3><p>数据段用于存储已初始化的全局和静态变量。与BSS不同，这部分数据在程序编译时就已存储在可执行文件中，并在程序加载时被加载到内存中</p>
+<h3 id="8-代码段-Text-Segment"><a href="#8-代码段-Text-Segment" class="headerlink" title="8. 代码段 (Text Segment)"></a>8. 代码段 (Text Segment)</h3><p>代码段用于存储程序的可执行代码，即指令。这个区域通常是只读的，防止程序意外或恶意修改指令</p>
+<h3 id="9-未使用空间"><a href="#9-未使用空间" class="headerlink" title="9. 未使用空间"></a>9. 未使用空间</h3><p>最底部是未使用的内存区域</p>
+<h3 id="区域1"><a href="#区域1" class="headerlink" title="区域1"></a>区域1</h3><p>包括从“栈 (Stack)”到“动态链接库 (Dynamically Linked Libraries) 和堆 (Heap)”之间的内存区域。这部分内存属于用户态可用的动态数据区域，用于程序在运行时动态分配和管理的内存</p>
+<h3 id="区域2"><a href="#区域2" class="headerlink" title="区域2"></a>区域2</h3><p>包括从“BSS段”到“代码段 (Text Segment)”之间的内存区域。它包含了BSS段、数据段和代码段。这部分内存主要用于存储程序的静态数据和指令，是程序在编译和加载时就已确定的区域，属于只读或只写数据区域</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
 </search>
